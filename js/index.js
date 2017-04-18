@@ -275,7 +275,6 @@ class Tool {
       let target = e.target
       let name = target.getAttribute('id')
       this.selected = name
-      palette.entrance.style.color = this[this.selected].color
       if (name == 'round') {
         ctx.save()
         ctx.translate(canvasWidth, 0)
@@ -298,6 +297,8 @@ class Tool {
         }
         image.src = ori
 
+      } else {
+        palette.entrance.style.color = this[name].color
       }
     })
     this.pencil.bindEvent()
