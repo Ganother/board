@@ -5,8 +5,10 @@
 html {
   height: 100%; }
 
-body {
-  height: 100%; }
+body { 
+  height: 100%;
+
+}
 .show{
   display: block !important;
 }
@@ -48,7 +50,7 @@ canvas {
   }
 .icon-palette{
   position: absolute;
-  bottom: 0;
+  bottom: 1px;
   right: 20px;
   font-size: 30px;
   line-height: 30px;
@@ -58,7 +60,7 @@ canvas {
   position: absolute;
   bottom: 56px;
   right: 0;
-  height: 30px;
+  height: 32px;
   width: 0;
   transition: width .5s ease-in-out;
   padding:0 60px 0 20px;
