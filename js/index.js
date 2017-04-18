@@ -42,6 +42,7 @@ let thisTool
 class Pencil {
   constructor (width) {
     this.width = width
+    this.color = "#000"
     this.drawing = false
     this.isSelect = false
     this.name = 'pencil'
@@ -50,6 +51,7 @@ class Pencil {
   begin (loc) {
     ctx.save()
     ctx.lineWidth = this.width
+    ctx.strokeStyle = this.color
     ctx.beginPath()
     ctx.moveTo(loc.x, loc.y)
   }
@@ -97,6 +99,7 @@ class Pencil {
 class Line {
   constructor (width) {
     this.width = width
+    this.color = "#000"
     this.startPosition = {
       x: 0,
       y: 0
@@ -112,6 +115,7 @@ class Line {
     Object.assign(this.startPosition, loc)
     ctx.save()
     ctx.lineWidth = this.width
+    ctx.strokeStyle = this.color
   }
   draw (loc) {
     ctx.putImageData(this.firstDot, 0, 0)
@@ -163,6 +167,7 @@ class Line {
 class Rect {
   constructor (width) {
     this.width = width
+    this.color = "#000"
     this.startPosition = {
       x: 0,
       y: 0
@@ -178,6 +183,7 @@ class Rect {
     Object.assign(this.startPosition, loc)
     ctx.save()
     ctx.lineWidth = this.width
+    ctx.strokeStyle = this.color
   }
   draw (loc) {
     ctx.putImageData(this.firstDot, 0, 0)
@@ -253,6 +259,13 @@ class Tool {
             item.dom.style.color = '#000'
           }
         }
+      },
+      get : function () {
+        for (let item of allTools) {
+          if (item.isSelect) {
+            return item.name
+          }
+        }
       }
     })
   }
@@ -262,6 +275,7 @@ class Tool {
       let target = e.target
       let name = target.getAttribute('id')
       this.selected = name
+      palette.entrance.style.color = this[this.selected].color
       if (name == 'round') {
         ctx.save()
         ctx.translate(canvasWidth, 0)
@@ -292,5 +306,31 @@ class Tool {
   }
 }
 
+class Palette {
+  constructor () {
+    this.dom = document.getElementById("Palette")
+    this.entrance = document.getElementById("toPalette")
+    this.show = false
+  }
+  bindEvent () {
+    this.dom.addEventListener('click', (e) => {
+      const target = e.target
+      if (target === this.entrance) {
+        this.show = !this.show
+        if (this.show) {
+          this.dom.className = 'palette palette-show'
+        } else {
+          this.dom.className = 'palette'
+        }
+      } else if (target.className.indexOf('item') !== -1) {
+        const color = window.getComputedStyle(target, null).backgroundColor
+        this.entrance.style.color = color
+        tools[tools.selected].color = color
+      }
+    })
+  }
+}
 const tools = new Tool()
+const palette = new Palette()
+palette.bindEvent()
 tools.bindEvent()

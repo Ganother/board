@@ -1,0 +1,102 @@
+
+
+
+
+@function parseInt($n){
+  @return $n / ($n * 0 +1);
+}
+
+
+@mixin back-sprite($width,$height,$top,$left){
+  width: $width;
+  height: $height;
+  background-position: $top $left;
+}
+
+@mixin single-back($width,$height,$url){
+  width: $width;
+  height: $height;
+  background: url($url) no-repeat;
+}
+
+@mixin inline-block{
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+}
+
+
+@mixin single-text{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+$baseFont: 40;
+
+@function rem($px){
+  $list: ();
+  @each $item in $px{
+    @if $item == 0 or $item == auto{
+      $list: append($list, $item);
+    }@else{
+      $unit: unit($item);
+      $val: parseInt($item);
+
+      @if $unit == px {
+        $list: append($list, ($val / $baseFont + rem))
+      }
+
+      @if $unit == rem {
+        $list: append($list, $item);
+      }
+    }
+  }
+  @return $list;
+}
+
+
+//1px top border
+@mixin top-border($num,$type,$color){
+  position: relative;
+  &:after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-bottom: $num $type $color;
+    -webkit-transform: scaleY(0.5);
+    -webkit-transform-origin: 0 0;
+  }
+}
+
+//1px bottom border
+@mixin bottom-border($num,$type,$color){
+  position: relative;
+  &:after{
+    content: "";
+    position: absolute;
+    bottom: -$num;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-bottom: $num $type $color;
+    -webkit-transform: scaleY(0.5);
+    -webkit-transform-origin: 0 0;
+  }
+}
+
+
+@mixin clearfix{
+   &:after{
+     visibility: hidden;
+     display: block;
+     font-size: 0;
+     content: '';
+     clear: both;
+     height: 0;
+   }
+  *zoom: 1;
+}
