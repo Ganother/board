@@ -95,6 +95,7 @@ canvas {
     border: 1px solid #dfdfdf;
   }
 }
+
 @keyframes show-left {
   0%{
     opacity: 0;
@@ -163,4 +164,45 @@ canvas {
 }
 .black{
   background-color: #000;
+}
+
+.width{
+  position: absolute;
+  bottom: 56px;
+  left: 0;
+  height: 32px;
+  width: 0;
+  transition: width .5s ease-in-out;
+  padding:0 20px 0 50px;
+  box-sizing: border-box;
+  overflow: hidden;
+  .icon-width{
+    position: absolute;
+    bottom: 1px;
+    left: 10px;
+    font-size: 30px;
+    line-height: 30px;
+  }
+  .bar{
+    width: 100%;
+    height: 20px;
+    border-radius: 5px;
+    animation: show-left .5s ease-in-out;
+    overflow: auto;
+    background-color: #fff;
+  }
+  .range{
+    width: 100%;
+    font-size: 14px;
+    font-weight: bold;
+    height: 20px;
+  }
+}
+
+.width-show{
+  width: 100%;
+  .bar{
+    padding:5px 2px;
+    border: 1px solid #dfdfdf;
+  }
 }

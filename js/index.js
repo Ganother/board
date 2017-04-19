@@ -299,6 +299,7 @@ class Tool {
 
       } else {
         palette.entrance.style.color = this[name].color
+        lineWidth.range.value = this[name].width / 3
       }
     })
     this.pencil.bindEvent()
@@ -331,7 +332,34 @@ class Palette {
     })
   }
 }
+
+class LineWidth {
+  constructor () {
+    this.dom = document.getElementById("width")
+    this.entrance = document.getElementById("toWidth")
+    this.range = document.getElementById("lineWidth")
+    this.show = false
+  }
+  bindEvent () {
+    this.entrance.addEventListener('click', (e) => {
+      this.show = !this.show
+      if (this.show) {
+        this.dom.className = 'width width-show'
+      } else {
+        this.dom.className = 'width'
+      }
+    })
+    this.range.addEventListener('change', (e) => {
+      const width = this.range.value
+      tools[tools.selected].width = width * 3
+    })
+  }
+}
+
 const tools = new Tool()
 const palette = new Palette()
+const lineWidth = new LineWidth()
+
+lineWidth.bindEvent()
 palette.bindEvent()
 tools.bindEvent()
