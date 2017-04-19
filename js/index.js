@@ -46,7 +46,7 @@ class Pencil {
     this.drawing = false
     this.isSelect = false
     this.name = 'pencil'
-    this.dom = document.getElementById(this.name)
+    this.dom = selector(`#${this.name}`)
   }
   begin (loc) {
     console.log(this.name)
@@ -101,7 +101,7 @@ class Eraser extends Pencil {
   constructor (width) {
     super(width, '#fff')
     this.name = 'eraser'
-    this.dom = document.getElementById(this.name)
+    this.dom = selector(`#${this.name}`)
   }
 }
 
@@ -117,7 +117,7 @@ class Line {
     this.isSelect = false
     this.drawing = false
     this.name = 'line'
-    this.dom = document.getElementById(this.name)
+    this.dom = selector(`#${this.name}`)
   }
   begin (loc) {
     this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
@@ -185,7 +185,7 @@ class Rect {
     this.isSelect = false
     this.drawing = false
     this.name = 'rect'
-    this.dom = document.getElementById(this.name)
+    this.dom = selector(`#${this.name}`)
   }
   begin (loc) {
     this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
@@ -254,7 +254,7 @@ class Rect {
 class Tool {
   constructor () {
     this.pencil = new Pencil(3, '#000')
-    this.eraser = new Eraser(3)
+    this.eraser = new Eraser(30)
     this.line = new Line(3)
     this.rect = new Rect(3)
     let allTools = [this.pencil, this.line, this.rect, this.eraser]
@@ -308,11 +308,11 @@ class Tool {
         image.src = ori
         return false
       }
+      lineWidth.range.value = this[name].width / 3
       if (name === 'eraser') {
         return false
       }
       palette.entrance.style.color = this[name].color
-      lineWidth.range.value = this[name].width / 3
     })
     this.pencil.bindEvent()
     this.line.bindEvent()
@@ -323,8 +323,8 @@ class Tool {
 
 class Palette {
   constructor () {
-    this.dom = document.getElementById("Palette")
-    this.entrance = document.getElementById("toPalette")
+    this.dom = selector("#Palette")
+    this.entrance = selector("#toPalette")
     this.show = false
   }
   bindEvent () {
@@ -351,9 +351,9 @@ class Palette {
 
 class LineWidth {
   constructor () {
-    this.dom = document.getElementById("width")
-    this.entrance = document.getElementById("toWidth")
-    this.range = document.getElementById("lineWidth")
+    this.dom = selector("#width")
+    this.entrance = selector("#toWidth")
+    this.range = selector("#lineWidth")
     this.show = false
   }
   bindEvent () {
