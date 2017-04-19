@@ -40,15 +40,16 @@ function getTouchPosition(e){
 
 let thisTool
 class Pencil {
-  constructor (width) {
+  constructor (width, color) {
     this.width = width
-    this.color = "#000"
+    this.color = color
     this.drawing = false
     this.isSelect = false
     this.name = 'pencil'
     this.dom = document.getElementById(this.name)
   }
   begin (loc) {
+    console.log(this.name)
     ctx.save()
     ctx.lineWidth = this.width
     ctx.strokeStyle = this.color
@@ -93,6 +94,14 @@ class Pencil {
       this.end(loc)
       this.drawing = false
     })
+  }
+}
+
+class Eraser extends Pencil {
+  constructor (width) {
+    super(width, '#fff')
+    this.name = 'eraser'
+    this.dom = document.getElementById(this.name)
   }
 }
 
@@ -244,10 +253,11 @@ class Rect {
 
 class Tool {
   constructor () {
-    this.pencil = new Pencil(2)
-    this.line = new Line(2)
-    this.rect = new Rect(2)
-    let allTools = [this.pencil, this.line, this.rect]
+    this.pencil = new Pencil(3, '#000')
+    this.eraser = new Eraser(3)
+    this.line = new Line(3)
+    this.rect = new Rect(3)
+    let allTools = [this.pencil, this.line, this.rect, this.eraser]
     Object.defineProperty(this, 'selected', {
       set : function (value) {
         for (let item of allTools) {
@@ -296,15 +306,18 @@ class Tool {
           image2.src = ori2
         }
         image.src = ori
-
-      } else {
-        palette.entrance.style.color = this[name].color
-        lineWidth.range.value = this[name].width / 3
+        return false
       }
+      if (name === 'eraser') {
+        return false
+      }
+      palette.entrance.style.color = this[name].color
+      lineWidth.range.value = this[name].width / 3
     })
     this.pencil.bindEvent()
     this.line.bindEvent()
     this.rect.bindEvent()
+    this.eraser.bindEvent()
   }
 }
 
@@ -325,6 +338,9 @@ class Palette {
           this.dom.className = 'palette'
         }
       } else if (target.className.indexOf('item') !== -1) {
+        if (tools[tools.selected].name === 'eraser') {
+          return false
+        }
         const color = window.getComputedStyle(target, null).backgroundColor
         this.entrance.style.color = color
         tools[tools.selected].color = color

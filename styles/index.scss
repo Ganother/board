@@ -63,7 +63,7 @@ canvas {
   height: 32px;
   width: 0;
   transition: width .5s ease-in-out;
-  padding:0 60px 0 20px;
+  padding:0 60px 0 60px;
   box-sizing: border-box;
   overflow: hidden;
   .bar{
@@ -74,6 +74,7 @@ canvas {
     animation: show-left .5s ease-in-out;
     overflow: auto;
     background-color: #fff;
+    border: 1px solid #fff;
   }
   .scroll{
     @include clearfix;
@@ -185,24 +186,26 @@ canvas {
   }
   .bar{
     width: 100%;
-    height: 20px;
+    height: 30px;
     border-radius: 5px;
     animation: show-left .5s ease-in-out;
     overflow: auto;
     background-color: #fff;
+    border: 1px solid #fff;
   }
   .range{
-    width: 100%;
+    width: 90%;
     font-size: 14px;
     font-weight: bold;
     height: 20px;
+    display: block;
+    margin: 5px auto;
   }
 }
 
 .width-show{
   width: 100%;
   .bar{
-    padding:5px 2px;
     border: 1px solid #dfdfdf;
   }
 }
