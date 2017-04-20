@@ -361,29 +361,6 @@ class Tool {
       let target = e.target
       let name = target.getAttribute('id')
       this.selected = name
-//      if (name == 'round') {
-//        ctx.save()
-//        ctx.translate(canvasWidth, 0)
-//        ctx.scale(-1, 1)
-//        let ori = canvas.toDataURL()
-//        let image = new Image()
-//        image.onload = function () {
-//          ctx.drawImage(image, 0, 0)
-//          ctx.restore()
-//          ctx.save()
-//          ctx.translate(0, canvasHeight)
-//          ctx.scale(1, -1)
-//          let ori2 = canvas.toDataURL()
-//          let image2 = new Image()
-//          image2.onload = function () {
-//            ctx.drawImage(image2, 0, 0)
-//            ctx.restore()
-//          }
-//          image2.src = ori2
-//        }
-//        image.src = ori
-//        return false
-//      }
       lineWidth.range.value = this[name].width / 3
       if (name === 'eraser') {
         return false

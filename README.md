@@ -4,6 +4,6 @@
 [地址](https://ganother.github.io/board/index.html)
 ![](https://ganother.github.io/board/images/qrcode.png)
 
-目前实现的功能：铅笔，方形，线段，对称变换, 调色板，线条宽度，橡皮擦
+目前实现的功能：铅笔，方形，线段，对称变换, 调色板，线条宽度，橡皮擦，圆形
 
-接下来的事情：圆形，对称变换图标弄到上面
+接下来的事情：简笔画模板
