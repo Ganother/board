@@ -4,10 +4,10 @@
   function selector (select, Aparent) {
   let parent = Aparent || document
   let realSelector
-  if (select.indexOf('#') != -1) {
+  if (select.indexOf('#') !== -1) {
     realSelector = select.slice(1)
     return parent.getElementById(realSelector)
-  } else if (select.indexOf('.') != -1) {
+  } else if (select.indexOf('.') !== -1) {
     realSelector = select.slice(1)
     return parent.querySelectorAll(realSelector)
   } else {
@@ -25,20 +25,17 @@ const canvasHeight = canvas.height = (canvasOffset.height - toolHeight) * 3
 canvas.style.height = canvasHeight / 3 + 'px'
 canvasOffset = canvas.getBoundingClientRect()
 function windowToCanvas(x, y) {
-  let position = {
+  return {
     x: (x - canvasOffset.left) * (canvasWidth / canvasOffset.width),
     y: (y - canvasOffset.top) * (canvasHeight / canvasOffset.height)
   }
-  return position
 }
 
 function getTouchPosition(e){
   let touch = e.changedTouches[0]
-  let loc = windowToCanvas(touch.clientX, touch.clientY)
-  return loc
+  return windowToCanvas(touch.clientX, touch.clientY)
 }
 
-let thisTool
 class Pencil {
   constructor (width, color) {
     this.width = width
@@ -49,7 +46,6 @@ class Pencil {
     this.dom = selector(`#${this.name}`)
   }
   begin (loc) {
-    console.log(this.name)
     ctx.save()
     ctx.lineWidth = this.width
     ctx.strokeStyle = this.color
@@ -174,9 +170,9 @@ class Line {
 }
 
 class Rect {
-  constructor (width) {
-    this.width = width
-    this.color = "#000"
+  constructor (width, color) {
+    this.width = width || 3
+    this.color = color || '#000'
     this.startPosition = {
       x: 0,
       y: 0
@@ -251,13 +247,93 @@ class Rect {
   }
 }
 
+class Round {
+  constructor (width, color) {
+    this.width = width || 3
+    this.color = color || '#000'
+    this.startPosition = {
+      x: 0,
+      y: 0
+    }
+    this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    this.isSelect = false
+    this.drawing = false
+    this.name = 'round'
+    this.dom = selector(`#${this.name}`)
+  }
+  drawCalculate (loc) {
+    ctx.save()
+    ctx.lineWidth = this.width
+    ctx.strokeStyle = this.color
+    ctx.putImageData(this.firstDot, 0, 0)
+    const rect = {
+      width: loc.x - this.startPosition.x,
+      height: loc.y - this.startPosition.y
+    }
+    const rMax = Math.max(Math.abs(rect.width), Math.abs(rect.height))
+//    const rMin = Math.min(Math.abs(rect.width), Math.abs(rect.height))
+    rect.x = this.startPosition.x + rect.width / 2
+    rect.y = this.startPosition.y + rect.height / 2
+    rect.scale = {
+      x: Math.abs(rect.width) / rMax,
+      y: Math.abs(rect.height) / rMax
+    }
+    ctx.scale(rect.scale.x, rect.scale.y)
+    ctx.beginPath()
+    ctx.arc(rect.x / rect.scale.x, rect.y / rect.scale.y, rMax / 2, 0, Math.PI * 2)
+    ctx.stroke()
+    ctx.restore()
+  }
+  begin (loc) {
+    this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    Object.assign(this.startPosition, loc)
+  }
+  draw (loc) {
+    this.drawCalculate(loc)
+  }
+  end (loc) {
+    this.drawCalculate(loc)
+  }
+  bindEvent () {
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault()
+      if (!this.isSelect) {
+        return false
+      }
+      this.drawing = true
+      let loc = getTouchPosition(e)
+      this.begin(loc)
+    })
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault()
+      if (!this.isSelect) {
+        return false
+      }
+      if (this.drawing) {
+        let loc = getTouchPosition(e)
+        this.draw(loc)
+      }
+    })
+    canvas.addEventListener('touchend', (e) => {
+      e.preventDefault()
+      if (!this.isSelect) {
+        return false
+      }
+      let loc = getTouchPosition(e)
+      this.end(loc)
+      this.drawing = false
+    })
+  }
+}
+
 class Tool {
   constructor () {
     this.pencil = new Pencil(3, '#000')
     this.eraser = new Eraser(30)
     this.line = new Line(3)
     this.rect = new Rect(3)
-    let allTools = [this.pencil, this.line, this.rect, this.eraser]
+    this.round = new Round(3)
+    let allTools = [this.pencil, this.line, this.rect, this.eraser, this.round]
     Object.defineProperty(this, 'selected', {
       set : function (value) {
         for (let item of allTools) {
@@ -285,29 +361,29 @@ class Tool {
       let target = e.target
       let name = target.getAttribute('id')
       this.selected = name
-      if (name == 'round') {
-        ctx.save()
-        ctx.translate(canvasWidth, 0)
-        ctx.scale(-1, 1)
-        let ori = canvas.toDataURL()
-        let image = new Image()
-        image.onload = function () {
-          ctx.drawImage(image, 0, 0)
-          ctx.restore()
-          ctx.save()
-          ctx.translate(0, canvasHeight)
-          ctx.scale(1, -1)
-          let ori2 = canvas.toDataURL()
-          let image2 = new Image()
-          image2.onload = function () {
-            ctx.drawImage(image2, 0, 0)
-            ctx.restore()
-          }
-          image2.src = ori2
-        }
-        image.src = ori
-        return false
-      }
+//      if (name == 'round') {
+//        ctx.save()
+//        ctx.translate(canvasWidth, 0)
+//        ctx.scale(-1, 1)
+//        let ori = canvas.toDataURL()
+//        let image = new Image()
+//        image.onload = function () {
+//          ctx.drawImage(image, 0, 0)
+//          ctx.restore()
+//          ctx.save()
+//          ctx.translate(0, canvasHeight)
+//          ctx.scale(1, -1)
+//          let ori2 = canvas.toDataURL()
+//          let image2 = new Image()
+//          image2.onload = function () {
+//            ctx.drawImage(image2, 0, 0)
+//            ctx.restore()
+//          }
+//          image2.src = ori2
+//        }
+//        image.src = ori
+//        return false
+//      }
       lineWidth.range.value = this[name].width / 3
       if (name === 'eraser') {
         return false
@@ -318,6 +394,7 @@ class Tool {
     this.line.bindEvent()
     this.rect.bindEvent()
     this.eraser.bindEvent()
+    this.round.bindEvent()
   }
 }
 
@@ -379,3 +456,27 @@ const lineWidth = new LineWidth()
 lineWidth.bindEvent()
 palette.bindEvent()
 tools.bindEvent()
+
+selector("#symmetry").addEventListener('click', () => {
+  console.log(233)
+  ctx.save()
+  ctx.translate(canvasWidth, 0)
+  ctx.scale(-1, 1)
+  let ori = canvas.toDataURL()
+  let image = new Image()
+  image.onload = function () {
+    ctx.drawImage(image, 0, 0)
+    ctx.restore()
+    ctx.save()
+    ctx.translate(0, canvasHeight)
+    ctx.scale(1, -1)
+    let ori2 = canvas.toDataURL()
+    let image2 = new Image()
+    image2.onload = function () {
+      ctx.drawImage(image2, 0, 0)
+      ctx.restore()
+    }
+    image2.src = ori2
+  }
+  image.src = ori
+})
