@@ -16,13 +16,14 @@ function selector (select, Aparent) {
 }
 const canvas = selector('#canvas')
 const ctx = canvas.getContext('2d')
+const RATIO = RATIO
 ctx.globalCompositeOperation = 'source-atop'
 const tool = selector('#tool')
 const toolHeight = tool.offsetHeight
 let canvasOffset = canvas.getBoundingClientRect()
-const canvasWidth = canvas.width = canvasOffset.width * 3
-const canvasHeight = canvas.height = (canvasOffset.height - toolHeight) * 3
-canvas.style.height = canvasHeight / 3 + 'px'
+const canvasWidth = canvas.width = canvasOffset.width * RATIO
+const canvasHeight = canvas.height = (canvasOffset.height - toolHeight) * RATIO
+canvas.style.height = canvasHeight / RATIO + 'px'
 canvasOffset = canvas.getBoundingClientRect()
 function windowToCanvas(x, y) {
   return {
@@ -37,7 +38,7 @@ function getTouchPosition(e){
 }
 
 class Basic {
-  constructor (width = 3, color = '#000') {
+  constructor (width = RATIO, color = '#000') {
     this.width = width
     this.color = color
     this.drawing = false
@@ -46,7 +47,7 @@ class Basic {
 }
 
 class Pencil extends Basic {
-  constructor (width = 3, color = '#000') {
+  constructor (width = RATIO, color = '#000') {
     super(width, color)
     this.name = 'pencil'
     this.dom = selector(`#${this.name}`)
@@ -108,7 +109,7 @@ class Eraser extends Pencil {
 }
 
 class Line extends Basic {
-  constructor (width = 3, color = '#000') {
+  constructor (width = RATIO, color = '#000') {
     super(width, color)
     this.startPosition = {
       x: 0,
@@ -173,7 +174,7 @@ class Line extends Basic {
 }
 
 class Rect extends Basic {
-  constructor (width = 3, color = '#000') {
+  constructor (width = RATIO, color = '#000') {
     super(width, color)
     this.startPosition = {
       x: 0,
@@ -248,7 +249,7 @@ class Rect extends Basic {
 }
 
 class Round extends Basic{
-  constructor (width = 3, color = '#000') {
+  constructor (width = RATIO, color = '#000') {
     super(width, color)
     this.startPosition = {
       x: 0,
@@ -325,8 +326,8 @@ class Round extends Basic{
 
 class Tool {
   constructor () {
-    this.pencil = new Pencil(3, '#000')
-    this.eraser = new Eraser(30)
+    this.pencil = new Pencil(RATIO, '#000')
+    this.eraser = new Eraser(RATIO * 10)
     this.line = new Line()
     this.rect = new Rect()
     this.round = new Round()
@@ -358,7 +359,7 @@ class Tool {
       let target = e.target
       let name = target.getAttribute('id')
       this.selected = name
-      lineWidth.range.value = this[name].width / 3
+      lineWidth.range.value = this[name].width / RATIO
       if (name === 'eraser') {
         return false
       }
@@ -418,7 +419,7 @@ class LineWidth {
     })
     this.range.addEventListener('change', (e) => {
       const width = this.range.value
-      tools[tools.selected].width = width * 3
+      tools[tools.selected].width = width * RATIO
     })
   }
 }
