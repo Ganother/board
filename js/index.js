@@ -1,7 +1,7 @@
 /**
  * Created by Ganother on 2017/4/5.
  */
-  function selector (select, Aparent) {
+function selector (select, Aparent) {
   let parent = Aparent || document
   let realSelector
   if (select.indexOf('#') !== -1) {
@@ -36,12 +36,18 @@ function getTouchPosition(e){
   return windowToCanvas(touch.clientX, touch.clientY)
 }
 
-class Pencil {
-  constructor (width, color) {
+class Basic {
+  constructor (width = 3, color = '#000') {
     this.width = width
     this.color = color
     this.drawing = false
     this.isSelect = false
+  }
+}
+
+class Pencil extends Basic {
+  constructor (width = 3, color = '#000') {
+    super(width, color)
     this.name = 'pencil'
     this.dom = selector(`#${this.name}`)
   }
@@ -101,17 +107,14 @@ class Eraser extends Pencil {
   }
 }
 
-class Line {
-  constructor (width) {
-    this.width = width
-    this.color = "#000"
+class Line extends Basic {
+  constructor (width = 3, color = '#000') {
+    super(width, color)
     this.startPosition = {
       x: 0,
       y: 0
     }
     this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
-    this.isSelect = false
-    this.drawing = false
     this.name = 'line'
     this.dom = selector(`#${this.name}`)
   }
@@ -169,17 +172,14 @@ class Line {
   }
 }
 
-class Rect {
-  constructor (width, color) {
-    this.width = width || 3
-    this.color = color || '#000'
+class Rect extends Basic {
+  constructor (width = 3, color = '#000') {
+    super(width, color)
     this.startPosition = {
       x: 0,
       y: 0
     }
     this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
-    this.isSelect = false
-    this.drawing = false
     this.name = 'rect'
     this.dom = selector(`#${this.name}`)
   }
@@ -247,17 +247,14 @@ class Rect {
   }
 }
 
-class Round {
-  constructor (width, color) {
-    this.width = width || 3
-    this.color = color || '#000'
+class Round extends Basic{
+  constructor (width = 3, color = '#000') {
+    super(width, color)
     this.startPosition = {
       x: 0,
       y: 0
     }
     this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
-    this.isSelect = false
-    this.drawing = false
     this.name = 'round'
     this.dom = selector(`#${this.name}`)
   }
@@ -330,9 +327,9 @@ class Tool {
   constructor () {
     this.pencil = new Pencil(3, '#000')
     this.eraser = new Eraser(30)
-    this.line = new Line(3)
-    this.rect = new Rect(3)
-    this.round = new Round(3)
+    this.line = new Line()
+    this.rect = new Rect()
+    this.round = new Round()
     let allTools = [this.pencil, this.line, this.rect, this.eraser, this.round]
     Object.defineProperty(this, 'selected', {
       set : function (value) {
@@ -435,7 +432,6 @@ palette.bindEvent()
 tools.bindEvent()
 
 selector("#symmetry").addEventListener('click', () => {
-  console.log(233)
   ctx.save()
   ctx.translate(canvasWidth, 0)
   ctx.scale(-1, 1)
