@@ -16,7 +16,7 @@ function selector (select, Aparent) {
 }
 const canvas = selector('#canvas')
 const ctx = canvas.getContext('2d')
-const RATIO = RATIO
+const RATIO = 3
 ctx.globalCompositeOperation = 'source-atop'
 const tool = selector('#tool')
 const toolHeight = tool.offsetHeight
