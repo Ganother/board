@@ -29,8 +29,10 @@ const canvasHeight = canvas.height = (canvasOffset.height - toolHeight) * RATIO
 canvas.style.height = canvasHeight / RATIO + 'px'
 canvasOffset = canvas.getBoundingClientRect()
 
+let lastImageData = []
+
 // 坐标转换 相对窗口坐标变为canvas实际坐标
-function windowToCanvas(x, y) {
+function windowToCanvas (x, y) {
   return {
     x: (x - canvasOffset.left) * (canvasWidth / canvasOffset.width),
     y: (y - canvasOffset.top) * (canvasHeight / canvasOffset.height)
@@ -38,9 +40,15 @@ function windowToCanvas(x, y) {
 }
 
 // 获取鼠标canvas坐标
-function getTouchPosition(e){
+function getTouchPosition (e) {
   let touch = e.changedTouches[0]
   return windowToCanvas(touch.clientX, touch.clientY)
+}
+
+// 储存画布信息（用于撤回）
+function saveImageData (data) {
+  (lastImageData.length == 5) && (lastImageData.shift())
+  lastImageData.push(data)
 }
 
 // 工具基础 宽度，颜色，是否在绘画中，是否被选中
@@ -61,6 +69,7 @@ class Pencil extends Basic {
     this.dom = selector(`#${this.name}`)
   }
   begin (loc) {
+    saveImageData(ctx.getImageData(0, 0, canvasWidth, canvasHeight))
     // 先保存画布状态，再改变画布状态
     ctx.save()
     ctx.lineWidth = this.width
@@ -134,6 +143,7 @@ class Line extends Basic {
   begin (loc) {
     // 获取当前画布数据
     this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    saveImageData(this.firstDot)
     Object.assign(this.startPosition, loc)
     ctx.save()
     ctx.lineWidth = this.width
@@ -201,6 +211,7 @@ class Rect extends Basic {
   }
   begin (loc) {
     this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    saveImageData(this.firstDot)
     Object.assign(this.startPosition, loc)
     ctx.save()
     ctx.lineWidth = this.width
@@ -300,6 +311,7 @@ class Round extends Basic{
   }
   begin (loc) {
     this.firstDot = ctx.getImageData(0, 0, canvasWidth, canvasHeight)
+    saveImageData(this.firstDot)
     Object.assign(this.startPosition, loc)
   }
   draw (loc) {
@@ -453,28 +465,42 @@ palette.bindEvent()
 tools.bindEvent()
 
 //对称变换工具
-selector("#symmetry").addEventListener('click', () => {
-  ctx.save()
-  ctx.translate(canvasWidth, 0)
-  // 垂直翻转后导出画布
-  ctx.scale(-1, 1)
-  let ori = canvas.toDataURL()
-  let image = new Image()
-  image.onload = function () {
-    // 把翻转的图像数据画上
-    ctx.drawImage(image, 0, 0)
-    ctx.restore()
-    ctx.save()
-    ctx.translate(0, canvasHeight)
-    // 水平翻转后导出画布
-    ctx.scale(1, -1)
-    let ori2 = canvas.toDataURL()
-    let image2 = new Image()
-    image2.onload = function () {
-      ctx.drawImage(image2, 0, 0)
-      ctx.restore()
-    }
-    image2.src = ori2
-  }
-  image.src = ori
-})
+//selector("#symmetry").addEventListener('click', () => {
+//  ctx.save()
+//  ctx.translate(canvasWidth, 0)
+//  // 垂直翻转后导出画布
+//  ctx.scale(-1, 1)
+//  let ori = canvas.toDataURL()
+//  let image = new Image()
+//  image.onload = function () {
+//    // 把翻转的图像数据画上
+//    ctx.drawImage(image, 0, 0)
+//    ctx.restore()
+//    ctx.save()
+//    ctx.translate(0, canvasHeight)
+//    // 水平翻转后导出画布
+//    ctx.scale(1, -1)
+//    let ori2 = canvas.toDataURL()
+//    let image2 = new Image()
+//    image2.onload = function () {
+//      ctx.drawImage(image2, 0, 0)
+//      ctx.restore()
+//    }
+//    image2.src = ori2
+//  }
+//  image.src = ori
+//})
+
+;(function (ctx) {
+  selector("#cancel").addEventListener('click', () => {
+    if(lastImageData.length < 1) return false
+    ctx.putImageData(lastImageData[lastImageData.length - 1], 0, 0)
+    lastImageData.pop()
+  })
+  selector("#demo").addEventListener('click', () => {
+    selector("#demoBar").style.display = 'block'
+  })
+  selector("#close").addEventListener('click', () => {
+    selector("#demoBar").style.display = 'none'
+  })
+})(ctx)

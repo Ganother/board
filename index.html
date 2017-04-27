@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>画板</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
-  <link rel="stylesheet" href="//at.alicdn.com/t/font_8syadum6xwmw8kt9.css">
-  <link rel="stylesheet" href="styles/index.css?t=1750">
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_ot2a9rn0wgffxbt9.css">
+  <link rel="stylesheet" href="dist/css/index.css?t=1750">
 </head>
 <body>
 <canvas id="canvas"></canvas>
@@ -48,7 +48,15 @@
     <input type="range"  max="20" min="1" step="1" id="lineWidth" class="range" value="1">
   </form>
 </section>
-<i class="iconfont icon-symmetry" id="symmetry"></i>
+<!--<i class="iconfont icon-symmetry" id="symmetry"></i>-->
+<i class="iconfont icon-cancel" id="cancel"></i>
+<i class="iconfont icon-demo" id="demo"></i>
+<div class="demo-bar" id="demoBar">
+  <div class="main-bar">
+    <img src="images/doraemon.jpg" alt="" class="img">
+  </div>
+  <span class="close" id="close">&times;</span>
+</div>
 <script src="dist/js/index.js?t=3333"></script>
 </body>
 </html>
